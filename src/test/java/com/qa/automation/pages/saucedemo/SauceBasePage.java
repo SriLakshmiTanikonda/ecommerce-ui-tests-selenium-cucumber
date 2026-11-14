@@ -44,7 +44,10 @@ public abstract class SauceBasePage extends BasePage {
         };
         // The menu slides in; elementToBeClickable waits for the animation to finish.
         click(link);
-        if (isDisplayed(MENU_CLOSE)) {
+        // Logout leaves the page. Checking for the close button would race the
+        // navigation: it can still be seen on the old page, then vanish before
+        // the click, failing the step after a 10-second wait.
+        if (link != MENU_LOGOUT && isDisplayed(MENU_CLOSE)) {
             click(MENU_CLOSE);
         }
     }
