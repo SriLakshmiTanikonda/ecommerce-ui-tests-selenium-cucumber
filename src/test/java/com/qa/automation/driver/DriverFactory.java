@@ -4,6 +4,7 @@ import com.qa.automation.config.ConfigReader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.time.Duration;
+import java.util.Map;
 import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,6 +12,7 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.chromium.ChromiumOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -75,6 +77,7 @@ public final class DriverFactory {
                     options.addArguments("--headless=new");
                 }
                 options.addArguments("--window-size=1920,1080", "--disable-gpu", "--no-sandbox", "--disable-dev-shm-usage");
+                disablePasswordPopups(options);
                 yield options;
             }
             case "firefox" -> {
@@ -91,9 +94,24 @@ public final class DriverFactory {
                     options.addArguments("--headless=new");
                 }
                 options.addArguments("--window-size=1920,1080");
+                disablePasswordPopups(options);
                 yield options;
             }
             default -> throw new IllegalArgumentException("Unsupported browser: " + browser);
         };
+    }
+
+    /**
+     * Chromium browsers show a "password found in a data breach" dialog after a
+     * login with a well-known password (such as the demo sites' passwords). The
+     * dialog sits over the page and swallows clicks, so turn the password
+     * manager and its leak check off.
+     */
+    private static void disablePasswordPopups(ChromiumOptions<?> options) {
+        options.setExperimentalOption("prefs", Map.of(
+                "credentials_enable_service", false,
+                "profile.password_manager_enabled", false,
+                "profile.password_manager_leak_detection", false));
+        options.addArguments("--disable-features=PasswordLeakDetection,PasswordCheck");
     }
 }
