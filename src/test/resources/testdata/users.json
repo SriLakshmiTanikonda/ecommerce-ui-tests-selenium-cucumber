@@ -1,0 +1,27 @@
+{
+  "standard": {
+    "username": "standard_user",
+    "password": "secret_sauce",
+    "description": "Normal customer account"
+  },
+  "locked": {
+    "username": "locked_out_user",
+    "password": "secret_sauce",
+    "description": "Account blocked by the store"
+  },
+  "problem": {
+    "username": "problem_user",
+    "password": "secret_sauce",
+    "description": "Account that sees known UI defects"
+  },
+  "glitch": {
+    "username": "performance_glitch_user",
+    "password": "secret_sauce",
+    "description": "Account with a deliberately slow login"
+  },
+  "wrong_password": {
+    "username": "standard_user",
+    "password": "not_the_password",
+    "description": "Valid username, wrong password"
+  }
+}

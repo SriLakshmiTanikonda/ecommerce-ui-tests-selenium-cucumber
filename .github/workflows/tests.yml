@@ -1,0 +1,67 @@
+name: Selenium Cucumber Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Cucumber tag expression, e.g. @smoke or "@checkout and not @wip"'
+        required: false
+        default: 'not @wip'
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  tests:
+    name: Tests (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        # Chrome and Firefox come preinstalled on GitHub's Ubuntu runners.
+        browser: [chrome, firefox]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Run tests (failed scenarios are retried once)
+        run: >
+          mvn -B test
+          -Dbrowser=${{ matrix.browser }}
+          -Dheadless=true
+          "-Dcucumber.filter.tags=${{ github.event.inputs.tags || 'not @wip' }}"
+
+      - name: Build Allure report
+        if: always()
+        run: mvn -B -q allure:report || echo "No Allure results to report"
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-${{ matrix.browser }}
+          path: |
+            target/cucumber-reports/
+            target/site/allure-maven-plugin/
+            target/logs/
+          retention-days: 14
+
+      - name: Publish test summary
+        if: always()
+        uses: mikepenz/action-junit-report@v4
+        with:
+          report_paths: target/cucumber-reports/cucumber.xml
+          check_name: Test results (${{ matrix.browser }})
