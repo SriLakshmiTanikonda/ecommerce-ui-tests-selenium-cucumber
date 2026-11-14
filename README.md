@@ -1,6 +1,6 @@
 # Selenium + Java + Cucumber BDD Framework
 
-[![Selenium Cucumber Tests](https://github.com/YOUR_GITHUB_USERNAME/ecommerce-ui-tests-selenium-cucumber/actions/workflows/tests.yml/badge.svg)](https://github.com/YOUR_GITHUB_USERNAME/ecommerce-ui-tests-selenium-cucumber/actions/workflows/tests.yml)
+[![Selenium Cucumber Tests](https://github.com/SriLakshmiTanikonda/ecommerce-ui-tests-selenium-cucumber/actions/workflows/tests.yml/badge.svg)](https://github.com/SriLakshmiTanikonda/ecommerce-ui-tests-selenium-cucumber/actions/workflows/tests.yml)
 
 A behavior-driven UI test framework built with Selenium WebDriver 4, Cucumber 7 and TestNG. It covers two applications:
 
